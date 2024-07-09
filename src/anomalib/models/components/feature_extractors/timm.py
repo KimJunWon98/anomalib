@@ -90,7 +90,7 @@ class TimmFeatureExtractor(nn.Module):
         filtered_state_dict = {k: v for k, v in state_dict.items() if not k.startswith('fc.')}
         
         # 가중치 로드
-        self.feature_extractor.load_state_dict(torch.load(uri))
+        self.feature_extractor.load_state_dict(torch.load(uri), strict = False)
          
         # for param in self.feature_extractor.parameters():
         #     param.requires_grad = False
