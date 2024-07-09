@@ -59,7 +59,6 @@ class TimmFeatureExtractor(nn.Module):
         # Extract backbone-name and weight-URI from the backbone string.
         if "__AT__" in backbone:
             backbone, uri = backbone.split("__AT__")
-            pretrained_cfg = timm.models.registry.get_pretrained_cfg(backbone)
             user_fine_tuning = True
         else:
             pretrained_cfg = None
