@@ -76,10 +76,13 @@ class TimmFeatureExtractor(nn.Module):
         # )
         
         self.feature_extractor = timm.create_model(backbone, pretrained=True)
+        for param in self.feature_extractor.parameters():
+            param.requires_grad = False
+        num_ftrs = self.feature_extractor.fc.in_features
+        self.feature_extractor.fc = nn.Linear(num_ftrs, 11)
         
         # 가중치 로드
-        state_dict = torch.load(uri)
-        self.feature_extractor.model.load_state_dict(state_dict)
+        self.feature_extractor.load_state_dict(torch.load(uri))
         
         
         # if user_fine_tuning:
