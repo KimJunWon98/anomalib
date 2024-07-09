@@ -77,7 +77,14 @@ class TimmFeatureExtractor(nn.Module):
         
         if user_fine_tuning:
             state_dict = torch.load(uri)
-            self.feature_extractor.load_state_dict(state_dict)
+            # "module." 접두사 제거
+            new_state_dict = {}
+            for k, v in state_dict.items():
+                if k.startswith('module.'):
+                    new_state_dict[k[7:]] = v
+                else:
+                    new_state_dict[k] = v
+            self.feature_extractor.load_state_dict(new_state_dict)
             
         self.out_dims = self.feature_extractor.feature_info.channels()
         self._features = {layer: torch.empty(0) for layer in self.layers}
