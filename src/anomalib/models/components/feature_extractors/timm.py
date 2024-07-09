@@ -70,7 +70,6 @@ class TimmFeatureExtractor(nn.Module):
         self.feature_extractor = timm.create_model(
             backbone,
             pretrained=pre_trained,
-            pretrained_cfg=pretrained_cfg,
             features_only=True,
             exportable=True,
             out_indices=self.idx,
