@@ -83,18 +83,19 @@ class TimmFeatureExtractor(nn.Module):
             out_indices=self.idx,
         )
         
-        # uri 경로를 통해 fine-tuning weight load
-        state_dict = torch.load(uri)
-        
-        # 'module.' 접두사를 제거합니다.
-        new_state_dict = {key.replace('module.', ''): value for key, value in state_dict.items()}
+        if user_fine_tuning:       
+            # uri 경로를 통해 fine-tuning weight load
+            state_dict = torch.load(uri)
+            
+            # 'module.' 접두사를 제거합니다.
+            new_state_dict = {key.replace('module.', ''): value for key, value in state_dict.items()}
 
-        
-        # 'fc' 레이어를 제외한 가중치 추출
-        filtered_state_dict = {k: v for k, v in new_state_dict.items() if not k.startswith('fc.')}
-        
-        # 가중치 로드
-        self.feature_extractor.load_state_dict(filtered_state_dict, strict=False)
+            
+            # 'fc' 레이어를 제외한 가중치 추출
+            filtered_state_dict = {k: v for k, v in new_state_dict.items() if not k.startswith('fc.')}
+            
+            # 가중치 로드
+            self.feature_extractor.load_state_dict(filtered_state_dict, strict=False)
          
         # for param in self.feature_extractor.parameters():
         #     param.requires_grad = False
