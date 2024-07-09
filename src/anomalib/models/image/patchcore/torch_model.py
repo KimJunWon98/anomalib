@@ -34,7 +34,7 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
     def __init__(
         self,
         layers: Sequence[str],
-        backbone: str = "wide_resnet50_2",
+        backbone: str = "resnet50",
         pre_trained: bool = True,
         num_neighbors: int = 9,
     ) -> None:

@@ -40,7 +40,7 @@ class Patchcore(MemoryBankMixin, AnomalyModule):
 
     def __init__(
         self,
-        backbone: str = "wide_resnet50_2",
+        backbone: str = "resnet50",
         layers: Sequence[str] = ("layer2", "layer3"),
         pre_trained: bool = True,
         coreset_sampling_ratio: float = 0.1,
