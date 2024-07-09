@@ -67,24 +67,31 @@ class TimmFeatureExtractor(nn.Module):
         self.layers = list(layers)
         self.idx = self._map_layer_to_idx()
         self.requires_grad = requires_grad
-        self.feature_extractor = timm.create_model(
-            backbone,
-            pretrained=pre_trained,
-            features_only=True,
-            exportable=True,
-            out_indices=self.idx,
-        )
+        # self.feature_extractor = timm.create_model(
+        #     backbone,
+        #     pretrained=pre_trained,
+        #     features_only=True,
+        #     exportable=True,
+        #     out_indices=self.idx,
+        # )
         
-        if user_fine_tuning:
-            state_dict = torch.load(uri)
-            # "module." 접두사 제거
-            new_state_dict = {}
-            for k, v in state_dict.items():
-                if k.startswith('module.'):
-                    new_state_dict[k[7:]] = v
-                else:
-                    new_state_dict[k] = v
-            self.feature_extractor.load_state_dict(new_state_dict)
+        self.feature_extractor = timm.create_model(backbone, pretrained=True)
+        
+        # 가중치 로드
+        state_dict = torch.load(uri)
+        self.feature_extractor.model.load_state_dict(state_dict)
+        
+        
+        # if user_fine_tuning:
+        #     state_dict = torch.load(uri)
+        #     # "module." 접두사 제거
+        #     new_state_dict = {}
+        #     for k, v in state_dict.items():
+        #         if k.startswith('module.'):
+        #             new_state_dict[k[7:]] = v
+        #         else:
+        #             new_state_dict[k] = v
+        #     self.feature_extractor.load_state_dict(new_state_dict)
             
         self.out_dims = self.feature_extractor.feature_info.channels()
         self._features = {layer: torch.empty(0) for layer in self.layers}
