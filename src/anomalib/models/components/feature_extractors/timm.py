@@ -53,12 +53,14 @@ class TimmFeatureExtractor(nn.Module):
     ) -> None:
         super().__init__()
 
+        user_fine_tuning = False
+        uri = ""
+        
         # Extract backbone-name and weight-URI from the backbone string.
         if "__AT__" in backbone:
             backbone, uri = backbone.split("__AT__")
             pretrained_cfg = timm.models.registry.get_pretrained_cfg(backbone)
-            # Override pretrained_cfg["url"] to use different pretrained weights.
-            pretrained_cfg["url"] = uri
+            user_fine_tuning = True
         else:
             pretrained_cfg = None
 
@@ -74,6 +76,11 @@ class TimmFeatureExtractor(nn.Module):
             exportable=True,
             out_indices=self.idx,
         )
+        
+        if user_fine_tuning:
+            state_dict = torch.load(uri)
+            self.feature_extractor.load_state_dict(state_dict)
+            
         self.out_dims = self.feature_extractor.feature_info.channels()
         self._features = {layer: torch.empty(0) for layer in self.layers}
 
