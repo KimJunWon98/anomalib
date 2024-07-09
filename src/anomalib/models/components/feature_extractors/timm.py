@@ -78,18 +78,24 @@ class TimmFeatureExtractor(nn.Module):
         self.feature_extractor = timm.create_model(
             backbone,
             pretrained=True,
-            features_only=False,
+            features_only=True,
             exportable=True,
             out_indices=self.idx,
         )
-        for param in self.feature_extractor.parameters():
-            param.requires_grad = False
-        num_ftrs = self.feature_extractor.fc.in_features
-        self.feature_extractor.fc = nn.Linear(num_ftrs, 11)
+        
+        # 전체 가중치 로드
+        state_dict = torch.load(uri)
+        
+        # 'fc' 레이어를 제외한 가중치 추출
+        filtered_state_dict = {k: v for k, v in state_dict.items() if not k.startswith('fc.')}
         
         # 가중치 로드
         self.feature_extractor.load_state_dict(torch.load(uri))
-        
+         
+        # for param in self.feature_extractor.parameters():
+        #     param.requires_grad = False
+        # num_ftrs = self.feature_extractor.fc.in_features
+        # self.feature_extractor.fc = nn.Linear(num_ftrs, 11)
         
         # if user_fine_tuning:
         #     state_dict = torch.load(uri)
