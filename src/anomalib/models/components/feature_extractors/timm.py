@@ -75,7 +75,13 @@ class TimmFeatureExtractor(nn.Module):
         #     out_indices=self.idx,
         # )
         
-        self.feature_extractor = timm.create_model(backbone, pretrained=True)
+        self.feature_extractor = timm.create_model(
+            backbone,
+            pretrained=True,
+            features_only=True,
+            exportable=True,
+            out_indices=self.idx,
+        )
         for param in self.feature_extractor.parameters():
             param.requires_grad = False
         num_ftrs = self.feature_extractor.fc.in_features
