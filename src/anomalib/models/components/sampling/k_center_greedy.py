@@ -33,6 +33,7 @@ class KCenterGreedy:
 
     def __init__(self, embedding: torch.Tensor, sampling_ratio: float) -> None:
         self.embedding = embedding
+        self.sampling_ratio_ = sampling_ratio
         self.coreset_size = int(embedding.shape[0] * sampling_ratio)
         self.model = SparseRandomProjection(eps=0.9)
 
@@ -95,6 +96,11 @@ class KCenterGreedy:
         else:
             self.features = self.embedding.reshape(self.embedding.shape[0], -1)
             self.update_distances(cluster_centers=selected_idxs)
+            
+        if self.sasampling_ratio_ == 1.0:
+            # sasampling_ratio_가 1.0인 경우 모든 인덱스를 반환합니다.
+            return list(range(self.n_observations))
+            
 
         selected_coreset_idxs: list[int] = []
         idx = int(torch.randint(high=self.n_observations, size=(1,)).item())
