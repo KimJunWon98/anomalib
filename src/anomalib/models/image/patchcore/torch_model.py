@@ -158,7 +158,7 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
             embedding (np.ndarray): Embedding tensor from the CNN
             sampling_ratio (float): Coreset sampling ratio
         """
-        if self.load_saved_membank:
+        if self.load_saved_membank == True:
             """파일에서 메모리 뱅크를 로드합니다."""
             self.memory_bank = torch.load(self.membank_path)
         
