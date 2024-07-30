@@ -45,6 +45,12 @@ class Patchcore(MemoryBankMixin, AnomalyModule):
         pre_trained: bool = True,
         coreset_sampling_ratio: float = 0.1,
         num_neighbors: int = 9,
+        
+        # 수정한 코드
+        save_membank: bool = False,
+        load_saved_membank:bool = False,
+        membank_path: str = ""
+        
     ) -> None:
         super().__init__()
 
@@ -53,6 +59,10 @@ class Patchcore(MemoryBankMixin, AnomalyModule):
             pre_trained=pre_trained,
             layers=layers,
             num_neighbors=num_neighbors,
+            # 수정한 코드
+            save_membank=save_membank,
+            load_saved_membank=load_saved_membank,
+            membank_path=membank_path
         )
         self.coreset_sampling_ratio = coreset_sampling_ratio
         self.embeddings: list[torch.Tensor] = []

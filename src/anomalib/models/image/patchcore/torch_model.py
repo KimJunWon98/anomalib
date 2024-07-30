@@ -37,6 +37,11 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
         backbone: str = "resnet50",
         pre_trained: bool = True,
         num_neighbors: int = 9,
+        
+        # 수정한 코드
+        save_membank: bool = False,
+        load_saved_membank:bool = False,
+        membank_path: str = ""
     ) -> None:
         super().__init__()
         self.tiler: Tiler | None = None
@@ -44,6 +49,11 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
         self.backbone = backbone
         self.layers = layers
         self.num_neighbors = num_neighbors
+        
+        # 수정한 코드
+        self.save_membank=save_membank,
+        self.load_saved_membank=load_saved_membank,
+        self.membank_path=membank_path
 
         self.feature_extractor = TimmFeatureExtractor(
             backbone=self.backbone,
@@ -146,10 +156,20 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
             embedding (np.ndarray): Embedding tensor from the CNN
             sampling_ratio (float): Coreset sampling ratio
         """
-        # Coreset Subsampling
-        sampler = KCenterGreedy(embedding=embedding, sampling_ratio=sampling_ratio)
-        coreset = sampler.sample_coreset()
-        self.memory_bank = coreset
+        if self.load_saved_membank:
+            """파일에서 메모리 뱅크를 로드합니다."""
+            self.memory_bank = torch.load(self.membank_path)
+        
+        else:        
+            # Coreset Subsampling
+            sampler = KCenterGreedy(embedding=embedding, sampling_ratio=sampling_ratio)
+            coreset = sampler.sample_coreset()
+            self.memory_bank = coreset
+            
+            # 수정한 코드 -> 메모리 뱅크를 path에 저장.
+            if self.save_membank:
+                """메모리 뱅크를 파일에 저장합니다."""
+                torch.save(self.memory_bank, self.membank_path)
 
     @staticmethod
     def euclidean_dist(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
