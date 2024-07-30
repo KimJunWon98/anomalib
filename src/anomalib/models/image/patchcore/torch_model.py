@@ -14,6 +14,8 @@ from anomalib.models.components import DynamicBufferMixin, KCenterGreedy, TimmFe
 
 from .anomaly_map import AnomalyMapGenerator
 
+import os
+
 if TYPE_CHECKING:
     from anomalib.data.utils.tiler import Tiler
 
@@ -169,6 +171,10 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
             # 수정한 코드 -> 메모리 뱅크를 path에 저장.
             if self.save_membank:
                 """메모리 뱅크를 파일에 저장합니다."""
+                directory_ = os.path.dirname(self.membank_path)
+                if not os.path.exists(directory_):
+                    os.makedirs(directory_)
+                    
                 torch.save(self.memory_bank, self.membank_path)
 
     @staticmethod
