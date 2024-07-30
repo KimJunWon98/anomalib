@@ -158,9 +158,10 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
             embedding (np.ndarray): Embedding tensor from the CNN
             sampling_ratio (float): Coreset sampling ratio
         """
-        if self.load_saved_membank == True:
+        if self.load_saved_membank and os.path.exists(self.membank_path):
             """파일에서 메모리 뱅크를 로드합니다."""
             self.memory_bank = torch.load(self.membank_path)
+            print(f"Loaded memory bank from {self.membank_path}")
         
         else:        
             # Coreset Subsampling
@@ -168,14 +169,15 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
             coreset = sampler.sample_coreset()
             self.memory_bank = coreset
             
-            # 수정한 코드 -> 메모리 뱅크를 path에 저장.
+            # 메모리 뱅크를 파일에 저장
             if self.save_membank:
                 """메모리 뱅크를 파일에 저장합니다."""
                 directory_ = os.path.dirname(self.membank_path)
                 if not os.path.exists(directory_):
                     os.makedirs(directory_)
-                    
+
                 torch.save(self.memory_bank, self.membank_path)
+                print(f"Saved memory bank to {self.membank_path}")
 
     @staticmethod
     def euclidean_dist(x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
