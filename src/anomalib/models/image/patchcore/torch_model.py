@@ -53,8 +53,8 @@ class PatchcoreModel(DynamicBufferMixin, nn.Module):
         self.num_neighbors = num_neighbors
         
         # 수정한 코드
-        self.save_membank=save_membank,
-        self.load_saved_membank=load_saved_membank,
+        self.save_membank=save_membank
+        self.load_saved_membank=load_saved_membank
         self.membank_path=membank_path
 
         self.feature_extractor = TimmFeatureExtractor(
